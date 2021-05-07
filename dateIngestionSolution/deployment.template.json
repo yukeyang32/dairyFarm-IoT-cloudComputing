@@ -1,0 +1,107 @@
+{
+  "$schema-template": "2.0.0",
+  "modulesContent": {
+    "$edgeAgent": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "runtime": {
+          "type": "docker",
+          "settings": {
+            "minDockerVersion": "v1.25",
+            "loggingOptions": "",
+            "registryCredentials": {
+              "container5412": {
+                "username": "$CONTAINER_REGISTRY_USERNAME_container5412",
+                "password": "$CONTAINER_REGISTRY_PASSWORD_container5412",
+                "address": "container5412.azurecr.io"
+              }
+            }
+          }
+        },
+        "systemModules": {
+          "edgeAgent": {
+            "type": "docker",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-agent:1.1",
+              "createOptions": {}
+            }
+          },
+          "edgeHub": {
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "mcr.microsoft.com/azureiotedge-hub:1.1",
+              "createOptions": {
+                "HostConfig": {
+                  "PortBindings": {
+                    "5671/tcp": [
+                      {
+                        "HostPort": "5671"
+                      }
+                    ],
+                    "8883/tcp": [
+                      {
+                        "HostPort": "8883"
+                      }
+                    ],
+                    "443/tcp": [
+                      {
+                        "HostPort": "443"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "modules": {
+          "dataIngestionModule": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.dataIngestionModule}",
+              "createOptions": {}
+            }
+          },
+          "dataFilterModule": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.dataFilterModule}",
+              "createOptions": {}
+            }
+          },
+          "machinelearningModule": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "container5412.azurecr.io/calvingpred:84",
+              "createOptions": "{\"WorkingDir\":\"/var/azureml-app\"}"
+            }
+          }
+        }
+      }
+    },
+    "$edgeHub": {
+      "properties.desired": {
+        "schemaVersion": "1.0",
+        "routes": {
+          "dataIngestionModuleToDataFilterModule": "FROM /messages/modules/dataIngestionModule/outputs/* INTO BrokeredEndpoint(\"/modules/dataFilterModule/inputs/input1\")",
+          "dataFilterModuleToIoTHub": "FROM /messages/modules/dataFilterModule/outputs/* INTO BrokeredEndpoint(\"/modules/machinelearningModule/inputs/amlInput\")",
+          "machinelearningModuleToIoTHub": "FROM /messages/modules/machinelearningModule/outputs/amlOutput INTO $upstream"
+        },
+        "storeAndForwardConfiguration": {
+          "timeToLiveSecs": 7200
+        }
+      }
+    }
+  }
+}
