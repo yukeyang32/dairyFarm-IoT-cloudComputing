@@ -2,9 +2,9 @@
   "$schema-version": "0.0.1",
   "description": "",
   "image": {
-    "repository": "container5412.azurecr.io/machinelearningmodule",
+    "repository": "container5412.azurecr.io/datatransformationmodule",
     "tag": {
-      "version": "0.0.8",
+      "version": "0.0.4",
       "platforms": {
         "amd64": "./Dockerfile.amd64",
         "amd64.debug": "./Dockerfile.amd64.debug",

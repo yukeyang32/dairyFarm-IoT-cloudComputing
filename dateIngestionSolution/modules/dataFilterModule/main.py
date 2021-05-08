@@ -39,7 +39,7 @@ async def main():
                 continue
             # for key in data:
             #     if data[key] != "" and dat
-            if data['animal_activity'] != "" and float(data['animal_activity']) > 10:
+            if data['animal_activity'] != "" and float(data['animal_activity']) > 15:
                 print("!! **  abnormal record - (" +
                               "animal_activity"+","+str(data['animal_activity'])+")")
                 result['filter'] = True
