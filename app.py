@@ -9,14 +9,18 @@ from forms import SubmitForm
 
 # Declare your table
 class ItemTable(Table):
-    name = Col('Name')
-    description = Col('Description')
+    name = Col('Time')
+    activity=Col('Activity')
+    temp=Col('temperature')
+    description = Col('Label')
 
 # Get some objects
 class Item(object):
-    def __init__(self, name, description):
+    def __init__(self, name, description,act,temp):
         self.name = name
         self.description = description
+        self.activity = act
+        self.temp = temp
 
 
 
@@ -67,7 +71,8 @@ def search(id):
     print(items)
     t=[]
     for item in items:
-        t.append(Item(item['data'][0]['time'], item['label']))
+        t.append(Item(item['data'][0]['time'], item['label'], item['data'][0]["animal_activity"],
+        item['data'][0]["temp_without_drink_cycles"]))
     return t
 
 
