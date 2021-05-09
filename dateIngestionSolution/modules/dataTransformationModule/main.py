@@ -6,12 +6,10 @@ import time
 import os
 import sys
 import asyncio
-import csv, json
+import json
 from six.moves import input
 import threading
 from azure.iot.device.aio import IoTHubModuleClient
-
-filepath = "1_DA Project_997.csv"
 
 async def main():
     try:
@@ -24,30 +22,22 @@ async def main():
 
         # connect the client.
         await module_client.connect()
-        print("IoT Hub module client initialized.") 
+        print("******-------   Start data Transformation ------****** ")
         # define behavior for receiving an input message on input1
-        with open(filepath, mode='r') as csv_file:
-            while True:
-                csv_reader = csv.reader(csv_file, delimiter=',')
-                line_count = 0
-                col_len = 0
-                col_name = []
-                for row in csv_reader:
-                    if line_count == 0:
-                        print(f'Column names are {", ".join(row)}')
-                        line_count += 1
-                        col_name = [row[i] for i in range(len(row))]
-                    else:
-                        msg = [row[i] for i in range(len(row))]
-                        data = {}
-                        for i in range(len(row)):
-                            data[col_name[i]] = msg[i]
-                        j_data = json.dumps({'data': [data]})
-                        output = bytes(j_data, encoding='utf8')
-                        line_count += 1
+        while True:
+            input_message = await module_client.receive_message_on_input("input1")  # blocking call
+            print("the data in the message received on input1 was ")
+            print(input_message.data)
+            print("custom properties are")
+            print(input_message.custom_properties)
+            sample_data = input_message.data
+            sample_data = json.loads(sample_data)
+            print("json_data: ", sample_data)
+            output = bytes(sample_data[0], encoding='utf8')
+            await module_client.send_message_to_output(output, "output1")
 
-                        # send to next client
-                        await module_client.send_message_to_output(output, "outputs")
+        await module_client.disconnect()
+
     except Exception as e:
         print ( "Unexpected error %s " % e )
         raise

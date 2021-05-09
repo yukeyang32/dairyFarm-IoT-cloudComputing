@@ -135,6 +135,29 @@
                 }
               }
             }
+          },
+          "dataTransformationModule": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.dataTransformationModule.debug}",
+              "createOptions": {
+                "ExposedPorts": {
+                  "5678/tcp": {}
+                },
+                "HostConfig": {
+                  "PortBindings": {
+                    "5678/tcp": [
+                      {
+                        "HostPort": "5678"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -146,7 +169,8 @@
           "dataIngestionModuleToIoTHub": "FROM /messages/modules/dataIngestionModule/outputs/* INTO $upstream",
           "sensorTodataIngestionModule": "FROM /messages/modules/SimulatedTemperatureSensor/outputs/temperatureOutput INTO BrokeredEndpoint(\"/modules/dataIngestionModule/inputs/input1\")",
           "dataFilterModuleToIoTHub": "FROM /messages/modules/dataFilterModule/outputs/* INTO $upstream",
-          "machinelearningModuleToIoTHub": "FROM /messages/modules/machinelearningModule/outputs/* INTO $upstream"
+          "machinelearningModuleToIoTHub": "FROM /messages/modules/machinelearningModule/outputs/* INTO $upstream",
+          "dataTransformationModuleToIoTHub": "FROM /messages/modules/dataTransformationModule/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200

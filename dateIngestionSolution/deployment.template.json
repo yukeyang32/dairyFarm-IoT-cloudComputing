@@ -86,6 +86,16 @@
               "image": "container5412.azurecr.io/calvingpred:84",
               "createOptions": "{\"WorkingDir\":\"/var/azureml-app\"}"
             }
+          },
+          "dataTransformationModule": {
+            "version": "1.0",
+            "type": "docker",
+            "status": "running",
+            "restartPolicy": "always",
+            "settings": {
+              "image": "${MODULES.dataTransformationModule}",
+              "createOptions": {}
+            }
           }
         }
       }
@@ -96,7 +106,8 @@
         "routes": {
           "dataIngestionModuleToDataFilterModule": "FROM /messages/modules/dataIngestionModule/outputs/* INTO BrokeredEndpoint(\"/modules/dataFilterModule/inputs/input1\")",
           "dataFilterModuleToIoTHub": "FROM /messages/modules/dataFilterModule/outputs/* INTO BrokeredEndpoint(\"/modules/machinelearningModule/inputs/amlInput\")",
-          "machinelearningModuleToIoTHub": "FROM /messages/modules/machinelearningModule/outputs/amlOutput INTO $upstream"
+          "machinelearningModuleToIoTHub": "FROM /messages/modules/machinelearningModule/outputs/amlOutput INTO BrokeredEndpoint(\"/modules/dataTransformationModule/inputs/input1\")",
+          "dataTransformationModuleToIoTHub": "FROM /messages/modules/dataTransformationModule/outputs/* INTO $upstream"
         },
         "storeAndForwardConfiguration": {
           "timeToLiveSecs": 7200
