@@ -1,12 +1,29 @@
 
-from flask import Flask
+from flask import Flask, render_template,request
 import json
 import os
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 
+from flask_table import Table, Col
+from forms import SubmitForm
+
+# Declare your table
+class ItemTable(Table):
+    name = Col('Name')
+    description = Col('Description')
+
+# Get some objects
+class Item(object):
+    def __init__(self, name, description):
+        self.name = name
+        self.description = description
+
+
+
 
 
 app = Flask(__name__)
+app.config['SECRET_KEY'] = 'cs5412'
 
 
 
@@ -28,15 +45,39 @@ container = database.create_container_if_not_exists(
 )
 
 
-@app.route("/")
-def hello():
-	query = "SELECT * FROM c WHERE c.id = '0f3077d3-c60c-4d5f-a01d-58e06127ad25' "
-	items = list(container.query_items(
-	query=query,
-	enable_cross_partition_query=True
-	))
-	request_charge = container.client_connection.last_response_headers['x-ms-request-charge']
-
-	return 'Query returned {0} items. Operation consumed {1} request units'.format(len(items), request_charge)
 
 
+@app.route("/", methods=['GET', 'POST'])
+def main_page():
+    form = SubmitForm()
+    if(form.is_submitted()):
+        result = request.form
+        id = result['cowID']
+        items = search(id)
+        table = ItemTable(items)
+    else:
+        table = ItemTable([])
+    return render_template('display.html', form=form, Table=table)
+
+
+def search(id):
+    query = "SELECT * FROM c WHERE ARRAY_CONTAINS(c.data,{'CowID': \"%s\"},true)" % (id)
+    items = list(container.query_items(query=query,enable_cross_partition_query=True))
+    print(query)
+    print(items)
+    t=[]
+    for item in items:
+        t.append(Item(item['data'][0]['time'], item['label']))
+    return t
+
+
+# @app.route("/table")
+# def table():
+# 	table = ItemTable(items)
+# 	return table.__html__()
+
+
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port)
