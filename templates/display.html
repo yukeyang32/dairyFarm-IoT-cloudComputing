@@ -2,6 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <title>DairyFarm</title>
 </head>
 
@@ -16,7 +18,32 @@
         <p> {{form.submit()}}</p>
     </form>
 <h2> Table</h2>
-{{ Table}}
+
+
+<table class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Time</th>
+        <th scope="col">Animal_Activity</th>
+        <th scope="col">Temp</th>
+        <th scope="col">Label</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+      <tr>
+        <th scope="row">1</th>
+        <td>{{item['data'][0]['time']}}</td>
+        <td>{{item['data'][0]["animal_activity"]}}</td>
+        <td>{{item['data'][0]["temp_without_drink_cycles"]}}</td>
+        <td>{{item['label']}}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+
 </body>
 
 </html>
