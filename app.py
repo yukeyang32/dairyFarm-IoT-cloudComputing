@@ -25,10 +25,10 @@ database_name = 'dairyCosDB'
 database = client.create_database_if_not_exists(id=database_name)
 
 
-container_name = 'dairyContainer'
+container_name = 'CowContainer'
 container = database.create_container_if_not_exists(
     id=container_name, 
-    partition_key=PartitionKey(path="/lastName"),
+    partition_key=PartitionKey(path="/PartitionId"),
     offer_throughput=400
 )
 
@@ -49,11 +49,14 @@ def main_page():
 
 
 def search(id):
-    query = "SELECT * FROM c WHERE ARRAY_CONTAINS(c.data,{'CowID': \"%s\"},true)" % (id)
-    items = list(container.query_items(query=query,enable_cross_partition_query=True))
-    print(query)
-    print(items)
+    query = "SELECT * FROM c WHERE c.data.CowID = \"%s\"" % (id)
+    items = list(container.query_items(query=query, enable_cross_partition_query=True))
     return items
+
+def delete(id):
+    query = "SELECT * FROM c WHERE c.data.CowID = \"%s\"" % (id)
+    for item in container.query_items(query=query, enable_cross_partition_query=True):
+        container.delete_item(item, partition_key=PartitionKey(path="/PartitionId"))
 
 
 # @app.route("/table")
