@@ -11,7 +11,7 @@ from six.moves import input
 import threading
 from azure.iot.device.aio import IoTHubModuleClient
 
-filepath = "1_DA Project_997.csv"
+filepath = "cow_data.csv"
 
 async def main():
     try:

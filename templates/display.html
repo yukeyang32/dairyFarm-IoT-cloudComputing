@@ -27,6 +27,7 @@
         <th scope="col">Time</th>
         <th scope="col">Animal_Activity</th>
         <th scope="col">Temp</th>
+        <th scope="col">CowID</th>
         <th scope="col">Label</th>
       </tr>
     </thead>
@@ -34,9 +35,10 @@
         {% for item in items %}
       <tr>
         <th scope="row">1</th>
-        <td>{{item['data'][0]['time']}}</td>
-        <td>{{item['data'][0]["animal_activity"]}}</td>
-        <td>{{item['data'][0]["temp_without_drink_cycles"]}}</td>
+        <td>{{item['data']['time']}}</td>
+        <td>{{item['data']["animal_activity"]}}</td>
+        <td>{{item['data']["temp_without_drink_cycles"]}}</td>
+        <td>{{item['data']["CowID"]}}</td>
         <td>{{item['label']}}</td>
       </tr>
       {% endfor %}

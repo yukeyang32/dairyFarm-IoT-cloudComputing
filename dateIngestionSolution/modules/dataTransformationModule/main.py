@@ -33,7 +33,7 @@ async def main():
             sample_data = input_message.data
             sample_data = json.loads(sample_data)
             print("json_data: ", sample_data)
-            output = bytes(sample_data[0], encoding='utf8')
+            output = bytes(sample_data, encoding='utf8')
             await module_client.send_message_to_output(output, "output1")
 
         await module_client.disconnect()

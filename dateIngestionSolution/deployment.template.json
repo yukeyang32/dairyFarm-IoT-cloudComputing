@@ -83,7 +83,7 @@
             "status": "running",
             "restartPolicy": "always",
             "settings": {
-              "image": "container5412.azurecr.io/calvingpred:84",
+              "image": "container5412.azurecr.io/calvingpred:92",
               "createOptions": "{\"WorkingDir\":\"/var/azureml-app\"}"
             }
           },

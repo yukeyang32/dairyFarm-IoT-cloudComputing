@@ -26,25 +26,33 @@ async def main():
         # define behavior for receiving an input message on input1
         while True:
             input_message = await module_client.receive_message_on_input("input1")  # blocking call
-            print("the data in the message received on input1 was ")
-            print(input_message.data)
-            print("custom properties are")
-            print(input_message.custom_properties)
+            # print("the data in the message received on input1 was ")
+            # print(input_message.data)
+            # print("custom properties are")
+            # print(input_message.custom_properties)
             sample_data = input_message.data
             decoded_sample = sample_data.decode('utf-8')
             decoded_dict = json.loads(decoded_sample)
             data = decoded_dict['data'][0]
             result = {}
+            result['filter'] = False
             if data['animal_activity'] == "" or data['temp_without_drink_cycles'] == "":
+                print("********** Missed animal_activity or temp_without_drink_cycles sensor data " +  "Time: " + str(data['time']) + " CowID: " + str(data['CowID'])
+                 + "  ************")     
                 continue
             # for key in data:
             #     if data[key] != "" and dat
-            if data['animal_activity'] != "" and float(data['animal_activity']) > 15:
+            if data['animal_activity'] != "" and float(data['animal_activity']) > 18:
                 print("!! **  abnormal record - (" +
-                              "animal_activity"+","+str(data['animal_activity'])+")")
+                              "animal_activity"+", "+str(data['animal_activity'])+") " + "Time: " + str(data['time']) + " CowID: " + str(data['CowID']))
                 result['filter'] = True
 
-            result['data'] = [data]
+            if data['temp_without_drink_cycles'] != "" and float(data['temp_without_drink_cycles']) < 33:
+                print("!! **  abnormal record - (" +
+                              "temp_without_drink_cycles"+","+str(data['temp_without_drink_cycles'])+") " + "Time: " + str(data['time']) + " CowID: " + str(data['CowID']))
+                result['filter'] = True
+
+            result['data'] = data
             j_data = json.dumps(result)
             output = bytes(j_data, encoding='utf8')
             await module_client.send_message_to_output(output, "output1")
