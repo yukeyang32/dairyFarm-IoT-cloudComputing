@@ -38,10 +38,10 @@ date = []
 
 
 def draw_graph(items):
-    x_axis = [item['data'][0]['time'] for item in items]
+    x_axis = [item['data']['time'] for item in items]
     label1 = [item['label'] for item in items]
-    label2 = [item['data'][0]['animal_activity'] for item in items]
-    label3 = [item['data'][0]['temp_without_drink_cycles'] for item in items]   
+    label2 = [item['data']['animal_activity'] for item in items]
+    label3 = [item['data']['temp_without_drink_cycles'] for item in items]   
     for index, item in enumerate(x_axis):
         x_axis[index] = datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
     zipped_lists = zip(x_axis, label1, label2, label3)
