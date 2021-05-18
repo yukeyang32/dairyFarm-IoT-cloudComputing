@@ -4,6 +4,16 @@
     <meta charset="UTF-8">
 
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="icon" href="https://jscdn.com.cn/highcharts/images/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      /* css 代码  */
+  </style>
+  <script src="https://code.highcharts.com.cn/highcharts/highcharts.js"></script>
+  <script src="https://code.highcharts.com.cn/highcharts/modules/exporting.js"></script>
+  <script src="https://code.highcharts.com.cn/highcharts/modules/series-label.js"></script>
+  <script src="https://code.highcharts.com.cn/highcharts/modules/oldie.js"></script>
+  <script src="https://code.highcharts.com.cn/highcharts-plugins/highcharts-zh_CN.js"></script>
     <title>DairyFarm</title>
 </head>
 
@@ -43,7 +53,92 @@
     </tbody>
   </table>
 
+<h2> Plot Graph </h2>
+<div id="container" style="max-width:800px;height:400px"></div>
+<script>
+var data = {{ img_data|tojson }}
+var x_axis =  data['x_axis']
+var y_axis =  data['label2']
+for (i = 0; i < y_axis.length; i++) {
+  y_axis[i] = parseFloat(y_axis[i])
+}
+console.log(y_axis)
+var chart = Highcharts.chart('container', {
+		title: {
+				text: 'animal_activity change with time'
+		},
+    xAxis: {
+      categories: x_axis
+    },
+		yAxis: {
+				title: {
+						text: 'animal activity'
+				}
+		},
+		legend: {
+				layout: 'vertical',
+				align: 'right',
+				verticalAlign: 'middle'
+		},
+		plotOptions: {
+      line: {
+            dataLabels: {
+                // 开启数据标签
+                enabled: true          
+            },
+            // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+            enableMouseTracking: false
+        }
+		},
+		series: [{
+				name: 'time',
+        data: y_axis
+		}],
+});
+</script>
 
+<div id="container2" style="max-width:800px;height:400px"></div>
+<script>
+var data = {{ img_data|tojson }}
+var x_axis =  data['x_axis']
+var y_axis =  data['label3']
+for (i = 0; i < y_axis.length; i++) {
+  y_axis[i] = parseFloat(y_axis[i])
+}
+console.log(y_axis)
+var chart = Highcharts.chart('container2', {
+		title: {
+				text: 'temp_without_drink_cycles change with time'
+		},
+    xAxis: {
+      categories: x_axis
+    },
+		yAxis: {
+				title: {
+						text: 'temp_without_drink_cycles'
+				}
+		},
+		legend: {
+				layout: 'vertical',
+				align: 'right',
+				verticalAlign: 'middle'
+		},
+		plotOptions: {
+      line: {
+            dataLabels: {
+                // 开启数据标签
+                enabled: true          
+            },
+            // 关闭鼠标跟踪，对应的提示框、点击事件会失效
+            enableMouseTracking: false
+        }
+		},
+		series: [{
+				name: 'time',
+        data: y_axis
+		}],
+});
+</script>
 </body>
 
 </html>

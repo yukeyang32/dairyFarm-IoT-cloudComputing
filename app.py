@@ -4,11 +4,11 @@ import json
 import os
 from azure.cosmos import exceptions, CosmosClient, PartitionKey
 from forms import SubmitForm
-
-
-
-
-
+from PIL import Image
+import base64
+import io
+from datetime import datetime
+import matplotlib.pyplot as plt
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'cs5412'
@@ -33,26 +33,44 @@ container = database.create_container_if_not_exists(
 )
 
 
+date = []
+
+
+
+def draw_graph(items):
+    x_axis = [item['data'][0]['time'] for item in items]
+    label1 = [item['label'] for item in items]
+    label2 = [item['data'][0]['animal_activity'] for item in items]
+    label3 = [item['data'][0]['temp_without_drink_cycles'] for item in items]   
+    for index, item in enumerate(x_axis):
+        x_axis[index] = datetime.strptime(item, '%Y-%m-%d %H:%M:%S')
+    zipped_lists = zip(x_axis, label1, label2, label3)
+    sorted_pairs = sorted(zipped_lists)
+    tuples = zip(*sorted_pairs)
+    x_axis, label1, label2, label3 = [ list(tuple) for tuple in  tuples]
+    return {"x_axis":x_axis, "label1": label1, "label2": label2, "label3":label3}
+
 
 
 @app.route("/", methods=['GET', 'POST'])
 def main_page():
     form = SubmitForm()
+    img_data = {"x_axis":[], "label1": []}
     if(form.is_submitted()):
         result = request.form
         id = result['cowID']
         items = search(id)
+        img_data = draw_graph(items)
+
     else:
         items = []
-
-    return render_template('display.html', form=form, items=items)
+    return render_template('display.html', form=form, items=items, img_data=img_data)
 
 
 def search(id):
     query = "SELECT * FROM c WHERE ARRAY_CONTAINS(c.data,{'CowID': \"%s\"},true)" % (id)
     items = list(container.query_items(query=query,enable_cross_partition_query=True))
-    print(query)
-    print(items)
+    print(type(items[0]['data'][0]['time']))
     return items
 
 
