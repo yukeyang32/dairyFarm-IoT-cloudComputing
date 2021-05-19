@@ -1,0 +1,5 @@
+RUN apt-get update
+RUN apt-get -y install gcc
+RUN apt-get -y install build-essential
+RUN rm -rf /opt/miniconda/lib/python3.6/site-packages/ruamel*
+RUN pip install ruamel_yaml==0.17.4
